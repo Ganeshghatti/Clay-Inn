@@ -133,7 +133,7 @@
           transform: translateX(-50%);
           width: 80%;
         }
-        .card-section-container{
+        .card-section-container {
           max-width: 75vw !important;
         }
       }
@@ -753,7 +753,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Initialize Flatpickr for Check-In Date in d-m-Y format
+        // Initialize Flatpickr for Check-In Date in d-m-Y format (Large Screens)
         const checkInInput = flatpickr("#check_in", {
           dateFormat: "d-m-Y",
           defaultDate: "today",
@@ -771,7 +771,7 @@
           },
         });
 
-        // Initialize Flatpickr for Check-Out Date in d-m-Y format
+        // Initialize Flatpickr for Check-Out Date in d-m-Y format (Large Screens)
         flatpickr("#check_out", {
           dateFormat: "d-m-Y",
           defaultDate: new Date().fp_incr(1),
@@ -784,7 +784,7 @@
           return `${year}-${month}-${day}`;
         }
 
-        // Handle form submission and redirection
+        // Handle form submission for large screens
         document
           .getElementById("booking-form")
           .addEventListener("submit", function (event) {
@@ -810,12 +810,25 @@
 
             window.location.href = redirectUrl;
           });
-      });
-    </script>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Initialize Flatpickr for Check-In Date in d-m-Y format for small screens
+        // Dynamic dropdown for location and hotel selection (Large Screens)
+        document
+          .getElementById("location")
+          .addEventListener("change", function () {
+            const location = this.value;
+            const hotelDropdown = document.getElementById("hotel");
+            hotelDropdown.innerHTML = "";
+
+            if (location === "new-delhi") {
+              hotelDropdown.innerHTML +=
+                '<option value="clay-inn-paschim-vihar">Clay Inn Hotel Paschim Vihar</option>';
+            } else if (location === "gurugram") {
+              hotelDropdown.innerHTML +=
+                '<option value="clay-inn-gurugram">Clay Inn Hotel Gurugram</option>';
+            }
+          });
+
+        // Initialize Flatpickr for Check-In Date in d-m-Y format (Small Screens)
         const checkInInput_Small = flatpickr("#check_in_Small", {
           dateFormat: "d-m-Y",
           defaultDate: "today",
@@ -825,7 +838,6 @@
               document.getElementById("check_out_Small");
             const checkInDate = selectedDates[0];
 
-            // Update the minDate and defaultDate for check-out based on check-in date
             checkOutInput_Small._flatpickr.set(
               "minDate",
               new Date(checkInDate.getTime() + 24 * 60 * 60 * 1000)
@@ -833,11 +845,8 @@
             checkOutInput_Small._flatpickr.setDate(
               new Date(checkInDate.getTime() + 24 * 60 * 60 * 1000)
             );
-
-            // Automatically jump to the checkout date input
             checkOutInput_Small.focus();
 
-            // Immediately calculate the difference based on the default check-out date
             calculateNights(
               checkInDate,
               checkOutInput_Small._flatpickr.selectedDates[0]
@@ -845,47 +854,37 @@
           },
         });
 
-        // Initialize Flatpickr for Check-Out Date in d-m-Y format for small screens
+        // Initialize Flatpickr for Check-Out Date in d-m-Y format (Small Screens)
         const checkOutInput_Small = flatpickr("#check_out_Small", {
           dateFormat: "d-m-Y",
-          defaultDate: new Date().fp_incr(1), // Default to tomorrow
-          minDate: new Date().fp_incr(1), // Minimum date is tomorrow
+          defaultDate: new Date().fp_incr(1),
+          minDate: new Date().fp_incr(1),
           onChange: function (checkoutDates) {
             const checkInDate = checkInInput_Small.selectedDates[0];
             const checkOutDate = checkoutDates[0];
-
-            // Calculate the difference between check-in and check-out dates
             calculateNights(checkInDate, checkOutDate);
           },
         });
-
-        // Function to convert date format from d-m-Y to Y-m-d
-        function formatDateToISO(dateStr) {
-          const [day, month, year] = dateStr.split("-");
-          return `${year}-${month}-${day}`;
-        }
 
         // Function to calculate and display the difference in nights
         function calculateNights(checkInDate, checkOutDate) {
           if (checkInDate && checkOutDate) {
             const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
-            const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Difference in days
-
-            // Display the number of nights
+            const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
             document.getElementById(
               "nights_SmallScreen"
             ).textContent = `${dayDiff} night${dayDiff > 1 ? "s" : ""}`;
           }
         }
 
-        // Initial calculation if both check-in and check-out dates are set by default
+        // Initial calculation of nights for small screens
         const initialCheckIn = checkInInput_Small.selectedDates[0];
         const initialCheckOut = checkOutInput_Small.selectedDates[0];
         if (initialCheckIn && initialCheckOut) {
           calculateNights(initialCheckIn, initialCheckOut);
         }
 
-        // Location to Hotel Dynamic Dropdown
+        // Dynamic dropdown for location and hotel selection (Small Screens)
         document
           .getElementById("location_small")
           .addEventListener("change", function () {
@@ -902,7 +901,7 @@
             }
           });
 
-        // Handle form submission and redirection for small screens
+        // Handle form submission for small screens
         document
           .getElementById("booking-form_Small")
           .addEventListener("submit", function (event) {
@@ -917,7 +916,6 @@
             const adults = document.getElementById("adults").value;
             const children = document.getElementById("children").value;
 
-            // Convert dates to Y-m-d format
             const formattedCheckInDate = formatDateToISO(checkInDate_Small);
             const formattedCheckOutDate = formatDateToISO(checkOutDate_Small);
 
