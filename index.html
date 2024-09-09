@@ -61,7 +61,7 @@
         display: flex;
         flex-direction: column;
         /* Stack navbar and content vertically */
-        justify-content: space-evenly;
+        justify-content: flex-start;
         align-items: center;
         /* Ensures the banner takes up at least 70% of the viewport height */
         background-image: url("website-banner.png");
@@ -69,6 +69,7 @@
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
+        height: 65vh;
         /* Text color for contrast */
       }
 
@@ -125,7 +126,11 @@
       /* Styles for the new card section */
       .card-section {
         padding: 20px;
-        background-color: #be9d54;
+        position: absolute;
+        left: 50%;
+        top: 40%;
+        transform: translateX(-50%);
+        width: 80%;
       }
 
       .card {
@@ -393,8 +398,9 @@
       #check_out {
         background-color: white;
       }
-      .col-md-6{
-        margin-top: 70px;
+      .col-md-6 {
+        margin-top: 75px;
+        max-width: 47%;
       }
       /* MEDIA ---------------------------- */
 
@@ -417,9 +423,15 @@
 
       @media only screen and (max-width: 425px) {
         .booking-form-container {
+          width: 90%;
+        }
+        .card-section {
+          top: 75%;
           width: 100%;
         }
-
+        .col-md-6 {
+          max-width: 100%;
+        }
         .card {
           margin-top: -65px;
         }
@@ -686,8 +698,8 @@
 
     <!-- New Section with Cards -->
     <section class="card-section">
-      <div class="container">
-        <div class="row">
+      <div class="container" style="max-width: 75vw">
+        <div class="row" style="justify-content: space-between">
           <div class="col-md-6 text-center">
             <a target="_blank" href="https://delhi.clayinnhotel.com/">
               <div class="card">
@@ -734,12 +746,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Include Flatpickr JS for datepicker functionality -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Initialize Flatpickr for date inputs
+        // Initialize Flatpickr for Check-In Date in d-m-Y format
         const checkInInput = flatpickr("#check_in", {
-          dateFormat: "Y-m-d",
+          dateFormat: "d-m-Y",
           defaultDate: "today",
           minDate: "today",
           onChange: function (selectedDates) {
@@ -751,34 +762,22 @@
             checkOutInput._flatpickr.setDate(
               new Date(selectedDates[0].getTime() + 24 * 60 * 60 * 1000)
             );
-
-            // Automatically jump to the checkout date input
-            checkOutInput.focus(); // Moves cursor to the checkout field
+            checkOutInput.focus();
           },
         });
 
+        // Initialize Flatpickr for Check-Out Date in d-m-Y format
         flatpickr("#check_out", {
-          dateFormat: "Y-m-d",
+          dateFormat: "d-m-Y",
           defaultDate: new Date().fp_incr(1),
           minDate: new Date().fp_incr(1),
         });
 
-        // Location to Hotel Dynamic Dropdown
-        document
-          .getElementById("location")
-          .addEventListener("change", function () {
-            const location = this.value;
-            const hotelDropdown = document.getElementById("hotel");
-            hotelDropdown.innerHTML = "";
-
-            if (location === "new-delhi") {
-              hotelDropdown.innerHTML +=
-                '<option value="clay-inn-paschim-vihar">Clay Inn Hotel Paschim Vihar</option>';
-            } else if (location === "gurugram") {
-              hotelDropdown.innerHTML +=
-                '<option value="clay-inn-gurugram">Clay Inn Hotel Gurugram</option>';
-            }
-          });
+        // Function to convert date format from d-m-Y to Y-m-d
+        function formatDateToISO(dateStr) {
+          const [day, month, year] = dateStr.split("-");
+          return `${year}-${month}-${day}`;
+        }
 
         // Handle form submission and redirection
         document
@@ -787,32 +786,33 @@
             event.preventDefault(); // Prevent form submission
 
             const location = document.getElementById("location").value;
-            // ------------------------
             const checkInDate = document.getElementById("check_in").value;
             const checkOutDate = document.getElementById("check_out").value;
-            // ------------------------
             const adults = document.getElementById("adults").value;
             const children = document.getElementById("children").value;
+
+            // Convert dates to Y-m-d format
+            const formattedCheckInDate = formatDateToISO(checkInDate);
+            const formattedCheckOutDate = formatDateToISO(checkOutDate);
 
             let redirectUrl = "https://bookings.simplotel.com/?";
 
             if (location === "new-delhi") {
-              redirectUrl += `chainId=9458&propertyId=9457&checkIn=${checkInDate}&checkOut=${checkOutDate}&adults=${adults}&children=${children}`;
-              window.location.href = redirectUrl;
+              redirectUrl += `chainId=9458&propertyId=9457&checkIn=${formattedCheckInDate}&checkOut=${formattedCheckOutDate}&adults=${adults}&children=${children}`;
             } else if (location === "gurugram") {
-              redirectUrl += `chainId=9458&propertyId=9459&checkIn=${checkInDate}&checkOut=${checkOutDate}&adults=${adults}&children=${children}`;
-              window.location.href = redirectUrl;
+              redirectUrl += `chainId=9458&propertyId=9459&checkIn=${formattedCheckInDate}&checkOut=${formattedCheckOutDate}&adults=${adults}&children=${children}`;
             }
+
+            window.location.href = redirectUrl;
           });
       });
     </script>
 
-    <!-- ---Small---------------------- -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Initialize Flatpickr for Check-In Date
+        // Initialize Flatpickr for Check-In Date in d-m-Y format for small screens
         const checkInInput_Small = flatpickr("#check_in_Small", {
-          dateFormat: "Y-m-d",
+          dateFormat: "d-m-Y",
           defaultDate: "today",
           minDate: "today",
           onChange: function (selectedDates) {
@@ -830,7 +830,7 @@
             );
 
             // Automatically jump to the checkout date input
-            checkOutInput_Small.focus(); // Moves cursor to the checkout field
+            checkOutInput_Small.focus();
 
             // Immediately calculate the difference based on the default check-out date
             calculateNights(
@@ -840,9 +840,9 @@
           },
         });
 
-        // Initialize Flatpickr for Check-Out Date
+        // Initialize Flatpickr for Check-Out Date in d-m-Y format for small screens
         const checkOutInput_Small = flatpickr("#check_out_Small", {
-          dateFormat: "Y-m-d",
+          dateFormat: "d-m-Y",
           defaultDate: new Date().fp_incr(1), // Default to tomorrow
           minDate: new Date().fp_incr(1), // Minimum date is tomorrow
           onChange: function (checkoutDates) {
@@ -853,6 +853,12 @@
             calculateNights(checkInDate, checkOutDate);
           },
         });
+
+        // Function to convert date format from d-m-Y to Y-m-d
+        function formatDateToISO(dateStr) {
+          const [day, month, year] = dateStr.split("-");
+          return `${year}-${month}-${day}`;
+        }
 
         // Function to calculate and display the difference in nights
         function calculateNights(checkInDate, checkOutDate) {
@@ -891,7 +897,7 @@
             }
           });
 
-        // Handle form submission and redirection
+        // Handle form submission and redirection for small screens
         document
           .getElementById("booking-form_Small")
           .addEventListener("submit", function (event) {
@@ -899,24 +905,26 @@
 
             const location_small =
               document.getElementById("location_small").value;
-            // ------------------------
             const checkInDate_Small =
               document.getElementById("check_in_Small").value;
             const checkOutDate_Small =
               document.getElementById("check_out_Small").value;
-            // ------------------------
             const adults = document.getElementById("adults").value;
             const children = document.getElementById("children").value;
+
+            // Convert dates to Y-m-d format
+            const formattedCheckInDate = formatDateToISO(checkInDate_Small);
+            const formattedCheckOutDate = formatDateToISO(checkOutDate_Small);
 
             let redirectUrl = "https://bookings.simplotel.com/?";
 
             if (location_small === "new-delhi") {
-              redirectUrl += `chainId=9458&propertyId=9457&checkIn=${checkInDate_Small}&checkOut=${checkOutDate_Small}&adults=${adults}&children=${children}`;
-              window.location.href = redirectUrl;
+              redirectUrl += `chainId=9458&propertyId=9457&checkIn=${formattedCheckInDate}&checkOut=${formattedCheckOutDate}&adults=${adults}&children=${children}`;
             } else if (location_small === "gurugram") {
-              redirectUrl += `chainId=9458&propertyId=9459&checkIn=${checkInDate_Small}&checkOut=${checkOutDate_Small}&adults=${adults}&children=${children}`;
-              window.location.href = redirectUrl;
+              redirectUrl += `chainId=9458&propertyId=9459&checkIn=${formattedCheckInDate}&checkOut=${formattedCheckOutDate}&adults=${adults}&children=${children}`;
             }
+
+            window.location.href = redirectUrl;
           });
       });
     </script>
