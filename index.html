@@ -72,7 +72,11 @@
         height: 62vh;
         /* Text color for contrast */
       }
-
+      @media only screen and (max-width: 455px) {
+        .banner {
+          height: auto;
+        }
+      }
       .booking-form-container {
         background-color: rgb(255, 255, 255);
         /* Add a slight background color to make form stand out */
@@ -124,7 +128,7 @@
       }
 
       /* Styles for the new card section */
-      @media only screen and (min-width: 425px) {
+      @media only screen and (min-width: 455px) {
         .card-section {
           padding: 20px;
           position: absolute;
@@ -426,12 +430,12 @@
         }
       }
 
-      @media only screen and (max-width: 425px) {
+      @media only screen and (max-width: 455px) {
         .booking-form-container {
           width: 93%;
         }
         .card-section {
-          margin-top: 22vh;
+          /* margin-top: 22vh; */
           width: 100%;
         }
         .col-md-6 {
