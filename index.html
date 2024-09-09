@@ -124,15 +124,19 @@
       }
 
       /* Styles for the new card section */
-      .card-section {
-        padding: 20px;
-        position: absolute;
-        left: 50%;
-        top: 37%;
-        transform: translateX(-50%);
-        width: 80%;
+      @media only screen and (min-width: 425px) {
+        .card-section {
+          padding: 20px;
+          position: absolute;
+          left: 50%;
+          top: 37%;
+          transform: translateX(-50%);
+          width: 80%;
+        }
+        .card-section-container{
+          max-width: 75vw !important;
+        }
       }
-
       .card {
         background-color: #be9d54;
         border: 1px solid #be9d54;
@@ -424,10 +428,10 @@
 
       @media only screen and (max-width: 425px) {
         .booking-form-container {
-          width: 90%;
+          width: 93%;
         }
         .card-section {
-          top: 75%;
+          margin-top: 125px;
           width: 100%;
         }
         .col-md-6 {
@@ -699,7 +703,7 @@
 
     <!-- New Section with Cards -->
     <section class="card-section">
-      <div class="container" style="max-width: 75vw">
+      <div class="container card-section-container">
         <div class="row" style="justify-content: space-between">
           <div class="col-md-6 text-center">
             <a target="_blank" href="https://delhi.clayinnhotel.com/">
