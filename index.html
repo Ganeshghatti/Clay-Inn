@@ -833,53 +833,57 @@
           });
 
         // Initialize Flatpickr for Check-In Date in d-m-Y format (Small Screens)
-        const checkInInput_Small = flatpickr("#check_in_Small", {
-          dateFormat: "d-m-Y",
-          defaultDate: "today",
-          minDate: "today",
-          onChange: function (selectedDates) {
-            const checkOutInput_Small =
-              document.getElementById("check_out_Small");
-            const checkInDate = selectedDates[0];
+        document.addEventListener("DOMContentLoaded", function () {
+          // Initialize Flatpickr for Check-In Date (Small Screens)
+          const checkInInput_Small = flatpickr("#check_in_Small", {
+            dateFormat: "d-m-Y",
+            defaultDate: "today",
+            minDate: "today",
+            onChange: function (selectedDates) {
+              const checkOutInput_Small =
+                document.getElementById("check_out_Small");
+              const selectedCheckInDate = selectedDates[0];
 
-            checkOutInput_Small._flatpickr.set(
-              "minDate",
-              new Date(checkInDate.getTime() + 24 * 60 * 60 * 1000)
-            );
-            checkOutInput_Small._flatpickr.setDate(
-              new Date(checkInDate.getTime() + 24 * 60 * 60 * 1000)
-            );
-            checkOutInput_Small.focus();
+              // Update minDate for checkOutInput_Small to be the day after the selected check-in date
+              checkOutInput_Small._flatpickr.set(
+                "minDate",
+                new Date(selectedCheckInDate.getTime() + 24 * 60 * 60 * 1000)
+              );
+              checkOutInput_Small._flatpickr.setDate(
+                new Date(selectedCheckInDate.getTime() + 24 * 60 * 60 * 1000)
+              );
+              checkOutInput_Small.focus();
 
-            calculateNights(
-              checkInDate,
-              checkOutInput_Small._flatpickr.selectedDates[0]
-            );
-          },
-        });
+              calculateNights(
+                selectedCheckInDate,
+                checkOutInput_Small._flatpickr.selectedDates[0]
+              );
+            },
+          });
 
-        // Initialize Flatpickr for Check-Out Date in d-m-Y format (Small Screens)
-        const checkOutInput_Small = flatpickr("#check_out_Small", {
-          dateFormat: "d-m-Y",
-          defaultDate: new Date().fp_incr(1),
-          minDate: new Date().fp_incr(1),
-          onChange: function (checkoutDates) {
-            const checkInDate = checkInInput_Small.selectedDates[0];
-            const checkOutDate = checkoutDates[0];
-            calculateNights(checkInDate, checkOutDate);
-          },
-        });
+          // Initialize Flatpickr for Check-Out Date (Small Screens)
+          const checkOutInput_Small = flatpickr("#check_out_Small", {
+            dateFormat: "d-m-Y",
+            defaultDate: new Date().fp_incr(1),
+            minDate: new Date().fp_incr(1),
+            onChange: function (checkoutDates) {
+              const checkInDate = checkInInput_Small.selectedDates[0];
+              const checkOutDate = checkoutDates[0];
+              calculateNights(checkInDate, checkOutDate);
+            },
+          });
 
-        // Function to calculate and display the difference in nights
-        function calculateNights(checkInDate, checkOutDate) {
-          if (checkInDate && checkOutDate) {
-            const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
-            const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-            document.getElementById(
-              "nights_SmallScreen"
-            ).textContent = `${dayDiff} night${dayDiff > 1 ? "s" : ""}`;
+          // Function to calculate and display the difference in nights
+          function calculateNights(checkInDate, checkOutDate) {
+            if (checkInDate && checkOutDate) {
+              const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
+              const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+              document.getElementById(
+                "nights_SmallScreen"
+              ).textContent = `${dayDiff} night${dayDiff > 1 ? "s" : ""}`;
+            }
           }
-        }
+        });
 
         // Initial calculation of nights for small screens
         const initialCheckIn = checkInInput_Small.selectedDates[0];
